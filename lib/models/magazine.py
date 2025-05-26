@@ -12,10 +12,11 @@ class Magazine:
 
     @name.setter
     def name(self, value):
-        if isinstance(value, str) and 2 <= len(value) <= 16:
-            self._name = value
-        else:
-            raise ValueError("Name must be a string between 2 and 16 characters.")
+        if not (isinstance(value, str) and 2 <= len(value) <= 16):
+          print(f"Invalid name detected: {value}")  # debug line
+          raise ValueError("Name must be a string between 2 and 16 characters.")
+        self._name = value
+
 
     @property
     def category(self):
@@ -23,24 +24,22 @@ class Magazine:
 
     @category.setter
     def category(self, value):
-        if isinstance(value, str) and len(value) > 0:
-            self._category = value
-        else:
+        if not (isinstance(value, str) and len(value.strip()) > 0):
             raise ValueError("Category must be a non-empty string.")
+        self._category = value.strip()
 
     def articles(self):
         from .article import Article
         return [article for article in Article.all if article.magazine == self]
 
     def contributors(self):
-        return list(set([article.author for article in self.articles()]))
+        return list(set(article.author for article in self.articles()))
 
     def article_titles(self):
         titles = [article.title for article in self.articles()]
         return titles if titles else None
 
     def contributing_authors(self):
-        from .article import Article
         author_count = {}
         for article in self.articles():
             author = article.author
